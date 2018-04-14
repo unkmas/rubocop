@@ -3556,6 +3556,20 @@ Enabled | No
 
 This cop checks for nested ternary op expressions.
 
+### Examples
+
+```ruby
+# bad
+a ? (b ? b1 : b2) : a2
+
+# good
+if a
+  b ? b1 : b2
+else
+  a2
+end
+```
+
 ### References
 
 * [https://github.com/bbatsov/ruby-style-guide#no-nested-ternary](https://github.com/bbatsov/ruby-style-guide#no-nested-ternary)
@@ -3851,6 +3865,18 @@ Enabled | Yes
 
 TODO: Make configurable.
 Checks for uses of if/then/else/end on a single line.
+
+### Examples
+
+```ruby
+# bad
+if foo then boo else doo end
+if foo then boo end
+unless foo then boo end
+
+# good
+foo ? boo : doo
+```
 
 ### References
 
@@ -5087,6 +5113,31 @@ method accepting a block match the names specified via configuration.
 
 For instance one can configure `reduce`(`inject`) to use |a, e| as
 parameters.
+
+Configuration option: Methods
+Should be set to use this cop. Array of hashes, where each key is the
+method name and value - array of argument names.
+
+### Examples
+
+#### Methods: [{reduce: %w[a b]}]
+
+```ruby
+# bad
+foo.reduce { |c, d| c + d }
+foo.reduce { |_, _d| 1 }
+
+# good
+foo.reduce { |a, b| a + b }
+foo.reduce { |a, _b| a }
+foo.reduce { |a, (id, _)| a + id }
+foo.reduce { true }
+
+# good
+foo.reduce do |c, d|
+  c + d
+end
+```
 
 ### Configurable attributes
 
